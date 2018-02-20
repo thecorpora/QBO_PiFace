@@ -1,8 +1,9 @@
 To calibrate pid servo control 
 
 To calibrate the servos control, you can run some of the tracking programs (PiFace or PîFaceFast) from a console.
-PiCmd. py is then run from another console.
+Then you can run PiCmd.py from another console.
 And finally PiCmdListen from a third console.
+
 To test different PID configurations, enter the following command in the console where we have executed PiCmdListen. py:
 
 QBO_>>> -c pid -x 1 -p 32 8 16
