@@ -35,6 +35,7 @@ touch_wait = 2
 
 no_face_tm = time.time()
 face_det_tm = time.time()
+last_face_det_tm = time.time()
 touch_tm = 0
 touch_samp = time.time()
 qbo_touch = 0
@@ -43,6 +44,8 @@ Listenig = False
 WaitingSpeech = False
 listen_thd = 0
 face_not_found_idx = 0
+mutex_wait_touch = False
+faceFound = False
 
 if len(sys.argv) > 1:
         port = sys.argv[1]
@@ -125,13 +128,20 @@ def WaitForSpeech():
 	return
 
 def WaitTouchMove():
-        global Xcoor, Ycoor, touch_tm
-        time.sleep(2)
+        global Xcoor, Ycoor, touch_tm, mutex_wait_touch, faceFound
+
+	if (mutex_wait_touch):
+		return
+	mutex_wait_touch = True
+	time.sleep(3)
+	if (faceFound):
+		return
         QBO.SetServo(1, Xcoor, 100)
         time.sleep(0.1)
         QBO.SetServo(2, Ycoor, 100)
-        #time.sleep(1)
+        time.sleep(1)
         touch_tm = time.time()
+	mutex_wait_touch = False
         return
 #============================================================================================================
 
@@ -207,7 +217,8 @@ while True:
 	                        Cface[0] = [0,0]
 	                        no_face_tm = time.time()
         else:
-                x,y,w,h = face
+     		last_face_det_tm = time.time()
+	        x,y,w,h = face
                 Cface = [(w/2+x),(h/2+y)]       # we are given an x,y corner point and a width and height, we need the center
 #		cv2.rectangle(aframe, (x,y), (x+w, y+h), (255,0,0), 3)
                 #print "To file"
@@ -249,22 +260,26 @@ while True:
 				time.sleep(0.05)
 				#print "MOVE REL Y: " + str(faceOffset_Y >> 1)
 
-        if time.time() -touch_samp > 0.5:
-#                qbo_touch = QBO.GetHeadCmd("GET_TOUCH", 0)
+        if (time.time() -touch_samp > 0.5) & (time.time() - last_face_det_tm > 3):
+                last_face_det_tm = time.time()
+		qbo_touch = QBO.GetHeadCmd("GET_TOUCH", 0)
                 if touch_tm == 0 and qbo_touch:
                         if qbo_touch == [1]:
                                 QBO.SetServo(1, Xmax - 25, 100)
                                 time.sleep(0.002)
                                 QBO.SetServo(2, Ymin - 5, 100)
-                                WaitTouchMove()
+				thread.start_new_thread(WaitTouchMove, ())
+                                #WaitTouchMove()
                         elif qbo_touch == [2]:
                                 QBO.SetServo(2, Ymin - 5, 100)
-                                WaitTouchMove()
+				thread.start_new_thread(WaitTouchMove, ())
+ #                               WaitTouchMove()
                         elif qbo_touch == [3]:
                                 QBO.SetServo(1, Xmin + 25, 100)
                                 time.sleep(0.002)
                                 QBO.SetServo(2, Ymin - 5, 100)
-                                WaitTouchMove()
+				thread.start_new_thread(WaitTouchMove, ())
+#                                WaitTouchMove()
         if touch_tm != 0 and time.time() - touch_tm > touch_wait:
                 print "touch ready"
                 touch_tm = 0
