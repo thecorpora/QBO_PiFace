@@ -8,10 +8,16 @@ import pipes
 import json
 import apiai
 import time
+import yaml
 
 class QBOtalk:
     def __init__(self):
-        CLIENT_ACCESS_TOKEN = '3f738f7e64d24d51b126f442b1513d7a'
+	config = yaml.safe_load(open("/home/pi/Documents/config.yml"))
+
+        CLIENT_ACCESS_TOKEN = config["tokenAPIai"]
+	print "TOKEN: " + CLIENT_ACCESS_TOKEN
+#	You can enter your token in the next line
+#        CLIENT_ACCESS_TOKEN = 'YOUR_TOKEN'
         # obtain audio from the microphone
         self.r = sr.Recognizer()
         self.ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
@@ -30,8 +36,11 @@ class QBOtalk:
         try:
             # print(r.recognize_google(audio,language="es-ES"))
 
+#            str = self.r.recognize_google(audio, language="es-ES")
             str = self.r.recognize_google(audio)
+	    print "LISTEN: " + str
             request = self.ai.text_request()
+#	    request.lang = 'es'
             request.query = str
             response = request.getresponse()
             jsonresp = response.read()
@@ -61,12 +70,12 @@ class QBOtalk:
         
     def callback_listen(self, recognizer, audio):
         print("callback listen")
-        self.GetAudio = True
-	with open("microphone-results.wav", "wb") as f:
-    		f.write(audio.get_wav_data())
         try:
             #strSpanish = self.r.recognize_google(audio,language="es-ES")
+	    with open("microphone-results.wav", "wb") as f:
+    		f.write(audio.get_wav_data())
             self.strAudio = self.r.recognize_google(audio)
+	    self.GetAudio = True
             print("listen: " + self.strAudio)
             #print("listenSpanish: ", strSpanish)
             #self.SpeechText(self.Response)
