@@ -133,6 +133,7 @@ def WaitTouchMove():
 	if (mutex_wait_touch):
 		return
 	mutex_wait_touch = True
+	# wait 3 seconds, finding a face
 	time.sleep(3)
 	if (faceFound):
 		return
