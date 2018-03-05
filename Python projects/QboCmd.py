@@ -70,7 +70,8 @@ class Controller:
         "SET_ENABLE_SPEAKER": (0x86, 1, 0),
         "SET_MEAN_RMS": (0x87, 6, 0), 
         "SET_USB2SERVO_FWD": (0x88, 1, 0),
-        "RESET_SOUND": (0x8F, 5, 0)}
+        "RESET_SOUND": (0x8F, 5, 0),
+        "SET_TOUCH_AUTO_OFF": (0x90, 4, 0)}
 
     touch_sampletime = {
         "320us": 0,
@@ -238,7 +239,10 @@ class Controller:
             
         for i in range(nParam):
             if nParam== 1:
-                data = cmd.data_bytes #[0]
+                if type(cmd.data_bytes) == list:
+                    data = cmd.data_bytes[0]
+                else :
+                    data = cmd.data_bytes
             else:
                 data = cmd.data_bytes[i]
 
@@ -261,8 +265,6 @@ class Controller:
         tx_buffer.append(self.OUTPUT_FLAG)
         databuffer = bytearray(tx_buffer)
         self.port.write(databuffer)
-#        self.port.flush()
-        
         return databuffer
 
     # Mounts protocol data to set servo position&speed  and call sends
@@ -281,7 +283,7 @@ class Controller:
 
     def SetAngleRelative(self, Axis, Angle):
         cmd_buffer = ([ Axis, Angle & 0xff ,  (Angle >>8) & 0xff])
-	print "SetAnlgeRelative: (" + str(Axis) + "," + str(Angle) + ")"
+        print "SetAnlgeRelative: (" + str(Axis) + "," + str(Angle) + ")"
         return self.SendCmdQBO(Command(self.SET_SERVO_ANGLE_REL, len(cmd_buffer), cmd_buffer))
 
     # Mounts protocol data to set QBO nose state color
@@ -297,7 +299,7 @@ class Controller:
     
     def SetPid(self, Axis, pid_p, pid_i, pid_d):
         cmd_buffer = ([Axis, pid_p, pid_i, pid_d])
-	print "SetPid " + str(cmd_buffer)
+        print "SetPid " + str(cmd_buffer)
         return self.SendCmdQBO(Command(self.SET_SERVO_PID, len(cmd_buffer), cmd_buffer)) 
     
 
