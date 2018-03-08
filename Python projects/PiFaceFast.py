@@ -27,7 +27,7 @@ Ymin = 420
 ## Initial Head position
 
 Xcoor = 511
-Ycoor = 600
+Ycoor = 550
 Facedet = 0
 
 ## Time head wait turned
@@ -133,7 +133,6 @@ def WaitTouchMove():
 	if (mutex_wait_touch):
 		return
 	mutex_wait_touch = True
-	# wait 3 seconds, finding a face
 	time.sleep(3)
 	if (faceFound):
 		return
@@ -149,7 +148,7 @@ def WaitTouchMove():
 print" Face tracking running."
 print" QBO nose bright green when see your face"
 
-Qbo.SpeechText("I am ready.")
+Qbo.SpeechText_2("I am ready.", "Estoy preparado.")
 
 touch_tm = time.time()
 
@@ -226,7 +225,7 @@ while True:
 #              	fr_time_ms = time.time()
 #                cv2.imwrite("../frames/frame"+str(fr_time_ms)+".jpg", aframe)     # save frame as JPEG file
       	        #print "To file end!"
-		#print "face ccord: " + str(Cface[0]) + "," + str(Cface[1])
+#		print "face ccord: " + str(Cface[0]) + "," + str(Cface[1])
                 if Facedet == 0:
                         if Listenig == False:
                                 QBO.SetNoseColor(4)
