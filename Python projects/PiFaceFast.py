@@ -68,10 +68,10 @@ QBO.SetServo(1, Xcoor, 100)
 QBO.SetServo(2, Ycoor, 100)
 time.sleep(1)
 #QBO.SetPid(1, 26, 12, 16)
-QBO.SetPid(1, 26, 1, 16)
+QBO.SetPid(1, 26, 2, 16)
 time.sleep(1)
 #QBO.SetPid(2, 26, 12, 16)
-QBO.SetPid(2, 26, 1, 16)
+QBO.SetPid(2, 26, 2, 16)
 time.sleep(1)
 QBO.SetNoseColor(0)       #Off QBO nose brigth
 
@@ -122,7 +122,8 @@ def WaitForSpeech():
 			return
 	        elif Qbo.GetResponse == True:
         	        listen_thd(wait_for_stop = True)
-                	Qbo.SpeechText(Qbo.Response)
+			if len(Qbo.Response) > 0:
+	                	Qbo.SpeechText(Qbo.Response)
                 	QBO.SetNoseColor(0)
                 	Qbo.GetResponse = False
                 	Listenig = False
