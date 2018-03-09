@@ -27,7 +27,7 @@ Ymin = 420
 ## Initial Head position
 
 Xcoor = 511
-Ycoor = 540
+Ycoor = 450
 Facedet = 0
 
 ## Time head wait turned
@@ -68,10 +68,10 @@ QBO.SetServo(1, Xcoor, 100)
 QBO.SetServo(2, Ycoor, 100)
 time.sleep(1)
 #QBO.SetPid(1, 26, 12, 16)
-QBO.SetPid(1, 26, 2, 16)
+QBO.SetPid(1, 26, 1, 16)
 time.sleep(1)
 #QBO.SetPid(2, 26, 12, 16)
-QBO.SetPid(2, 26, 2, 16)
+QBO.SetPid(2, 26, 1, 16)
 time.sleep(1)
 QBO.SetNoseColor(0)       #Off QBO nose brigth
 
@@ -105,7 +105,7 @@ time.sleep(1)		# Wait for them to start
 def ServoHome():
         global Xcoor, Ycoor, touch_tm
         Xcoor = 511
-        Ycoor = 540
+        Ycoor = 450
         QBO.SetServo(1, Xcoor, 100)
         time.sleep(0.1)
         QBO.SetServo(2, Ycoor, 100)
